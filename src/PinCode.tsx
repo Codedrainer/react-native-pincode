@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   TextStyle,
-  TouchableHighlight,
+  TouchableHighlight,TouchableOpacity,
   Vibration,
   View,
   ViewStyle
@@ -15,6 +15,7 @@ import { grid } from "./design/grid";
 import { colors } from "./design/colors";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import * as _ from "lodash";
+import * as Animatable from 'react-native-animatable';
 import Animate from "react-move/Animate";
 import { easeLinear } from "d3-ease";
 import delay from "./delay";
@@ -195,7 +196,7 @@ class PinCode extends React.PureComponent<IProps, IState> {
           timing: { duration: 200, ease: easeLinear }
         }}>
         {({ opacity }: any) => (
-          <TouchableHighlight
+          <TouchableOpacity
             style={
               this.props.styleButtonCircle
                 ? this.props.styleButtonCircle
@@ -231,7 +232,7 @@ class PinCode extends React.PureComponent<IProps, IState> {
               ]}>
               {text}
             </Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
         )}
       </Animate>
     );
@@ -302,100 +303,36 @@ class PinCode extends React.PureComponent<IProps, IState> {
             ((password.length > 0 && !changeScreen) || showError) &&
             !attemptFailed;
           return (
-            <Animate
+            <Animatable.View
               key={val}
-              show={true}
-              start={{
-                opacity: 0.5,
-                height: this._circleSizeEmpty,
-                width: this._circleSizeEmpty,
-                borderRadius: this._circleSizeEmpty / 2,
-                color: this.props.colorPassword
-                  ? this.props.colorPassword
-                  : colors.turquoise,
-                marginRight: 10,
-                marginLeft: 10,
-                marginBottom: grid.unit * 2,
-                marginTop: grid.unit * 4,
-                x: 0,
-                y: 0
-              }}
-              update={{
-                x: [moveData.x],
-                opacity: [lengthSup ? 1 : 0.5],
-                height: [
-                  lengthSup ? this._circleSizeFull : this._circleSizeEmpty
-                ],
-                width: [
-                  lengthSup ? this._circleSizeFull : this._circleSizeEmpty
-                ],
-                color: [
-                  showError
-                    ? this.props.colorPasswordError
-                    ? this.props.colorPasswordError
-                    : colors.alert
-                    : this.props.colorPassword
-                    ? this.props.colorPassword
-                    : colors.turquoise
-                ],
-                borderRadius: [
-                  lengthSup
+              animation={showError ? 'shake' : ''}
+              useNativeDriver={true}
+              direction={'alternate'}
+            >
+              <View
+                style={{
+                  opacity:lengthSup ? 1 : 0.5,
+                  height:lengthSup ? this._circleSizeFull : this._circleSizeEmpty,
+                  width: lengthSup ? this._circleSizeFull : this._circleSizeEmpty,
+                  borderRadius:lengthSup
                     ? this._circleSizeFull / 2
-                    : this._circleSizeEmpty / 2
-                ],
-                marginRight: [
-                  lengthSup
-                    ? 10 - (this._circleSizeFull - this._circleSizeEmpty) / 2
-                    : 10
-                ],
-                marginLeft: [
-                  lengthSup
-                    ? 10 - (this._circleSizeFull - this._circleSizeEmpty) / 2
-                    : 10
-                ],
-                marginBottom: [
-                  marginSup
-                    ? grid.unit * 2 -
-                    (this._circleSizeFull - this._circleSizeEmpty) / 2
-                    : grid.unit * 2
-                ],
-                marginTop: [
-                  marginSup
-                    ? grid.unit * 4 -
-                    (this._circleSizeFull - this._circleSizeEmpty) / 2
-                    : grid.unit * 4
-                ],
-                y: [moveData.y],
-                timing: { duration: 200, ease: easeLinear }
-              }}>
-              {({
-                  opacity,
-                  x,
-                  height,
-                  width,
-                  color,
-                  borderRadius,
-                  marginRight,
-                  marginTop,
-                  marginLeft,
-                  marginBottom
-                }: any) => (
-                <View
-                  style={{
-                    left: x,
-                    opacity: opacity,
-                    height: height,
-                    width: width,
-                    borderRadius: borderRadius,
-                    marginLeft: marginLeft,
-                    marginRight: marginRight,
-                    marginBottom: marginBottom,
-                    marginTop: marginTop,
-                    backgroundColor: color
-                  }}
-                />
-              )}
-            </Animate>
+                    : this._circleSizeEmpty / 2,
+                  marginLeft: lengthSup ? 10 - (this._circleSizeFull - this._circleSizeEmpty) / 2 : 10,
+                  marginRight: lengthSup ? 10 - (this._circleSizeFull - this._circleSizeEmpty) / 2 : 10,
+                  marginBottom: marginSup ? 32 - (this._circleSizeFull - this._circleSizeEmpty) / 2 : 32,
+                  marginTop: marginSup ? 64 - (this._circleSizeFull - this._circleSizeEmpty) / 2 : 64,
+                  backgroundColor: showError
+                    ? this.props.colorPasswordError
+                      ? this.props.colorPasswordError
+                      : colors.alert
+                    : this.props.colorPassword
+                      ? this.props.colorPassword
+                      : colors.turquoise
+                }}
+              />
+            </Animatable.View>
+            /* )}
+           </Animate>*/
           );
         })}
       </View>
@@ -805,7 +742,7 @@ let styles = StyleSheet.create({
     flexDirection: "row",
     height: "auto",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   textDeleteButton: {
     fontWeight: "200",
